@@ -6,8 +6,9 @@ const cors = require("cors")
 const app = express()
 app.use(express.json())
 app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"]
+    origin: ["https://virtual-store-ui.vercel.app", "http://localhost:3001"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
   }));
 db.on("connected", function () {
     console.log("connected!");
