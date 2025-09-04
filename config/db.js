@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
- mongoose.connect("mongodb://localhost:27017/api"); 
+ mongoose.connect(process.env.DB); 
 
  
  module.exports = mongoose.connection;
