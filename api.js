@@ -5,9 +5,20 @@ const express = require("express")
 const cors = require("cors")
 const app = express()
 app.use(express.json())
-app.use(cors({
-    origin: ["https://virtual-store-ui.vercel.app", "http://localhost:3001"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+  const allowedOrigins = [
+    "https://virtual-store-ui.vercel.app",
+    "http://localhost:3001"
+  ];
+  
+  // Middleware CORS aplicado a todas as rotas
+  app.use(cors({
+    origin: function(origin, callback){
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true
   }));
 db.on("connected", function () {
