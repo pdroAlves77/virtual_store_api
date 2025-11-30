@@ -7,7 +7,7 @@ function generateToken(params = {}) {
     const secretKey = 'QZx7k!43f2L#u9XrGm@t$NvP5&h^EkzTqW1YD8AjBnCU0so6IjMVlRye3KHapwb';
     return jwt.sign({ params }, secretKey, {
         algorithm: 'HS256',
-        expiresIn: '1m'
+        expiresIn: '1h'
     });
 };
 

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require('../models/product.model');
+const jwt = require('jsonwebtoken');
 
 exports.getProducts = async (req, res) => {
     try {
@@ -36,12 +37,21 @@ exports.getProduct = async (req, res) => {
 exports.createProduct = async (req, res) => {
     try {
         let product = req.body;
-        const newProduct = await Product.create(product);
-
-        if(newProduct) {
-            return res.status(201).send({ message: "Product created!", data: newProduct });
+        console.log(req.headers.authorization);
+        let decoded = await jwt.verify(req.headers.authorization.split(' ')[1], `QZx7k!43f2L#u9XrGm@t$NvP5&h^EkzTqW1YD8AjBnCU0so6IjMVlRye3KHapwb`);
+        if (!decoded.params.id) {
+            throw Error('Invalid token!');
         } else {
-            return res.status(400).send({ message: "An error has occurred! Product not created!" });
+            // const userId = decoded.params.id;
+            const userId = decoded.params.id;
+            product.seller = new mongoose.Types.ObjectId(userId);
+            const newProduct = await Product.create(product);
+
+            if(newProduct) {
+                return res.status(201).send({ message: "Product created!", data: newProduct });
+            } else {
+                return res.status(400).send({ message: "An error has occurred! Product not created!" });
+            }
         }
     } catch (error) {
         return res.status(400).send(error.message);

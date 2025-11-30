@@ -12,18 +12,34 @@ const User = require('../models/user.model');
         expiresIn: config.timer
     });
 };*/
-
+const sgMail = require('@sendgrid/mail');
 
 exports.getUsers = async (req, res) => {
     try{
         let users;
+        const page = parseInt(req.query.page) || 1;   // página atual
+        const limit = parseInt(req.query.limit) || 10; // registros por página   
+        const skip = (page - 1) * limit;
+        let totalPages = 0;
+        let total = 0;
+
         if(req.query.name){
-            users = await User.find({ name: { '$regex': `.*${req.query.name}.*`, '$options': 'i' }});
+            total = await User.countDocuments({ name: { '$regex': `.*${req.query.name}.*`, '$options': 'i' } });
+            
+            users = await User.find({ name: { '$regex': `.*${req.query.name}.*`, '$options': 'i' }}).skip(skip).limit(limit);
         }else {
-            users = await User.find({});
+            total = await User.countDocuments();
+            users = await User.find({}).skip(skip).limit(limit);
         }
+        totalPages = Math.ceil(total / limit);
         if(users) {
-            return res.status(202).json(users);
+            return res.status(202).json({
+                total: total,
+                totalPages: totalPages,
+                data: users,
+                page: page,
+                limit: limit
+            });
         }else {
             return res.status(400).json({message: 'An error has occured!'});
         } 
@@ -59,6 +75,22 @@ exports.createUser = async (req, res) => {
         newUser.password = undefined;
 
         if(newUser) {
+            const msg = {
+                to: user.email, // destinatário
+                from: 'phsalves9@gmail.com', // remetente verificado
+                subject: 'Welcome to Sports!',
+                text: 'Este é um teste usando a SendGrid API',
+                html: '<strong>Este é um teste usando a SendGrid API</strong>',
+            };
+
+            sgMail
+            .send(msg)
+            .then(() => {
+                console.log('E-mail enviado com sucesso!');
+            })
+            .catch((error) => {
+                console.error('Erro ao enviar e-mail:', error);
+            });
             return res.status(201).send({ message: "User created!", data: newUser });
         } else {
             return res.status(400).send({ message: "An error has occured! User not created!" });
