@@ -34,21 +34,6 @@ scalability in mind, the API is built using Node.js and Express in TypeScript.
 
 ---
 
-## 🧠 Project Structure
-virtual_store_api/
-├── config/            # Configuration files and constants
-├── controllers/       # Route logic and handlers
-├── models/            # Data models and interfaces
-├── routes/            # Express route definitions
-├── .gitignore
-├── package.json
-├── tsconfig.json
-├── api.js             # Main entrypoint for the server
-└── README.md
-
-
----
-
 ## 📥 Installation & Local Setup
 ```bash
 # Clone repository
